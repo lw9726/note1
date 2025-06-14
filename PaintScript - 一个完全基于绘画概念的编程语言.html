@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaintScript - 绘画编程语言</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            color: #718096;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .keyword { color: #81c784; }
+        .string { color: #ffb74d; }
+        .number { color: #64b5f6; }
+        .comment { color: #a0a0a0; font-style: italic; }
+        
+        .demo-section {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .editor {
+            background: #1a202c;
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 300px;
+        }
+        
+        .editor textarea {
+            width: 100%;
+            height: 270px;
+            background: transparent;
+            border: none;
+            color: #e2e8f0;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+        }
+        
+        .canvas-container {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        #canvas {
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+        }
+        
+        .run-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .run-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature h3 {
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .feature p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 PaintScript</h1>
+            <p>用绘画的方式编程，用编程的方式绘画</p>
+        </div>
+        
+        <div class="content-grid">
+            <div class="card">
+                <h2>🎯 核心概念</h2>
+                <p><strong>画布 (Canvas):</strong> 程序的执行环境</p>
+                <p><strong>画笔 (Brush):</strong> 数据处理工具</p>
+                <p><strong>颜料 (Paint):</strong> 变量和数据</p>
+                <p><strong>调色板 (Palette):</strong> 函数库</p>
+                <p><strong>素描 (Sketch):</strong> 算法框架</p>
+                <p><strong>混色 (Blend):</strong> 数据合并操作</p>
+            </div>
+            
+            <div class="card">
+                <h2>🖌️ 基础语法</h2>
+                <div class="code-block">
+<span class="comment">// 创建画布</span>
+<span class="keyword">画布</span> <span class="string">"我的作品"</span> 宽度:<span class="number">800</span> 高度:<span class="number">600</span>
+
+<span class="comment">// 声明颜料(变量)</span>
+<span class="keyword">颜料</span> 红色 = <span class="string">"#FF0000"</span>
+<span class="keyword">颜料</span> 数量 = <span class="number">10</span>
+
+<span class="comment">// 选择画笔</span>
+<span class="keyword">画笔</span> 细笔 尺寸:<span class="number">2</span>
+
+<span class="comment">// 开始绘画(执行)</span>
+<span class="keyword">开始绘画</span> {
+    移动到 (<span class="number">100</span>, <span class="number">100</span>)
+    画线到 (<span class="number">200</span>, <span class="number">200</span>)
+}
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>🎨 控制结构</h2>
+                <div class="code-block">
+<span class="comment">// 重复画法(循环)</span>
+<span class="keyword">重复画</span> <span class="number">5</span> 次 {
+    画圆 半径:<span class="number">10</span>
+    移动 右:<span class="number">50</span>
+}
+
+<span class="comment">// 条件画法</span>
+<span class="keyword">如果</span> 颜料不足 {
+    <span class="keyword">补充颜料</span> 红色
+} <span class="keyword">否则</span> {
+    <span class="keyword">继续画</span>
+}
+
+<span class="comment">// 分层画法(函数)</span>
+<span class="keyword">画法</span> 画花朵(位置, 颜色) {
+    移动到 位置
+    选择颜色 颜色
+    画圆 半径:<span class="number">20</span>
+}
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>🌈 调色板(内置函数)</h2>
+                <div class="code-block">
+<span class="comment">// 颜色调色板</span>
+<span class="keyword">混色</span>(红色, 蓝色) → 紫色
+<span class="keyword">渐变</span>(起始色, 结束色, 步数)
+<span class="keyword">随机色</span>()
+
+<span class="comment">// 几何调色板</span>
+<span class="keyword">画直线</span>(起点, 终点)
+<span class="keyword">画曲线</span>(控制点列表)
+<span class="keyword">画多边形</span>(顶点列表)
+
+<span class="comment">// 艺术调色板</span>
+<span class="keyword">模糊效果</span>(强度)
+<span class="keyword">水彩效果</span>(透明度)
+<span class="keyword">油画效果</span>(笔触大小)
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🖼️ 交互式代码编辑器</h2>
+            <p>在左侧编写PaintScript代码，点击运行按钮在右侧画布上看到效果！</p>
+            
+            <div class="editor-container">
+                <div class="editor">
+                    <textarea id="codeEditor" placeholder="在这里写你的PaintScript代码...">画布 "演示" 宽度:400 高度:300
+
+颜料 红色 = "#FF6B6B"
+颜料 蓝色 = "#4ECDC4"
+颜料 黄色 = "#FFE66D"
+
+画笔 中笔 尺寸:3
+
+开始绘画 {
+    // 画一个彩色花朵
+    移动到 (200, 150)
+    
+    重复画 8 次 {
+        选择颜色 红色
+        画线到 (200, 100)
+        回到中心
+        旋转 45度
+    }
+    
+    选择颜色 黄色
+    画圆 半径:15
+}</textarea>
+                </div>
+                
+                <div class="canvas-container">
+                    <canvas id="canvas" width="400" height="300"></canvas>
+                    <br>
+                    <button class="run-button" onclick="runPaintScript()">🎨 运行代码</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🎨 直观易懂</h3>
+                <p>使用绘画术语，让编程概念更容易理解</p>
+            </div>
+            <div class="feature">
+                <h3>🖌️ 视觉化</h3>
+                <p>代码执行结果直接呈现为艺术作品</p>
+            </div>
+            <div class="feature">
+                <h3>🌈 创意表达</h3>
+                <p>将逻辑思维与艺术创作完美结合</p>
+            </div>
+            <div class="feature">
+                <h3>📚 教育友好</h3>
+                <p>适合艺术爱好者学习编程基础</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function runPaintScript() {
+            const code = document.getElementById('codeEditor').value;
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 清空画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 简单的PaintScript解释器演示
+            try {
+                interpretPaintScript(code, ctx);
+            } catch (error) {
+                console.log('代码执行出错:', error);
+                drawErrorMessage(ctx);
+            }
+        }
+        
+        function interpretPaintScript(code, ctx) {
+            let currentX = 0, currentY = 0;
+            let currentColor = '#000000';
+            let lineWidth = 2;
+            
+            // 简化的解析逻辑
+            const lines = code.split('\n');
+            let inDrawingBlock = false;
+            let rotation = 0;
+            let centerX = 200, centerY = 150;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (!line || line.startsWith('//')) continue;
+                
+                if (line.includes('开始绘画')) {
+                    inDrawingBlock = true;
+                    ctx.beginPath();
+                    continue;
+                }
+                
+                if (line === '}' && inDrawingBlock) {
+                    inDrawingBlock = false;
+                    continue;
+                }
+                
+                if (inDrawingBlock) {
+                    if (line.includes('移动到')) {
+                        const coords = extractCoords(line);
+                        if (coords) {
+                            currentX = coords[0];
+                            currentY = coords[1];
+                            ctx.moveTo(currentX, currentY);
+                        }
+                    } else if (line.includes('画线到')) {
+                        const coords = extractCoords(line);
+                        if (coords) {
+                            ctx.strokeStyle = currentColor;
+                            ctx.lineWidth = lineWidth;
+                            ctx.lineTo(coords[0], coords[1]);
+                            ctx.stroke();
+                            currentX = coords[0];
+                            currentY = coords[1];
+                        }
+                    } else if (line.includes('画圆')) {
+                        const radius = extractNumber(line, '半径');
+                        if (radius) {
+                            ctx.strokeStyle = currentColor;
+                            ctx.fillStyle = currentColor;
+                            ctx.beginPath();
+                            ctx.arc(currentX, currentY, radius, 0, 2 * Math.PI);
+                            ctx.fill();
+                        }
+                    } else if (line.includes('选择颜色')) {
+                        if (line.includes('红色')) currentColor = '#FF6B6B';
+                        else if (line.includes('蓝色')) currentColor = '#4ECDC4';
+                        else if (line.includes('黄色')) currentColor = '#FFE66D';
+                    } else if (line.includes('重复画')) {
+                        const times = extractNumber(line, '');
+                        if (times) {
+                            for (let i = 0; i < times; i++) {
+                                // 模拟花瓣绘制
+                                ctx.strokeStyle = currentColor;
+                                ctx.lineWidth = lineWidth;
+                                ctx.beginPath();
+                                ctx.moveTo(centerX, centerY);
+                                
+                                const angle = (rotation + i * 45) * Math.PI / 180;
+                                const endX = centerX + Math.cos(angle) * 50;
+                                const endY = centerY + Math.sin(angle) * 50;
+                                
+                                ctx.lineTo(endX, endY);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                }
+                
+                // 处理变量声明
+                if (line.includes('颜料') && line.includes('=')) {
+                    if (line.includes('红色')) currentColor = '#FF6B6B';
+                    else if (line.includes('蓝色')) currentColor = '#4ECDC4';
+                    else if (line.includes('黄色')) currentColor = '#FFE66D';
+                }
+            }
+        }
+        
+        function extractCoords(line) {
+            const match = line.match(/\((\d+),\s*(\d+)\)/);
+            return match ? [parseInt(match[1]), parseInt(match[2])] : null;
+        }
+        
+        function extractNumber(line, keyword) {
+            if (keyword) {
+                const regex = new RegExp(keyword + ':(\\d+)');
+                const match = line.match(regex);
+                return match ? parseInt(match[1]) : null;
+            } else {
+                const match = line.match(/(\d+)/);
+                return match ? parseInt(match[1]) : null;
+            }
+        }
+        
+        function drawErrorMessage(ctx) {
+            ctx.fillStyle = '#FF6B6B';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('代码执行出错，请检查语法', 200, 150);
+        }
+        
+        // 页面加载时运行默认代码
+        window.onload = function() {
+            runPaintScript();
+        };
+    </script>
+</body>
+</html>
